@@ -1,3 +1,11 @@
 spring:
   application:
     name: Online_School_Project_AI
+  datasource:
+    url: jdbc:postgresql://localhost:5432/egeschool
+    username: postgres
+    password: zxcvb12345
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
