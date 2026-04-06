@@ -24,6 +24,7 @@ public class Recommendation {
 
     @Column
     private String text;
+
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;

@@ -33,11 +33,11 @@ public class Lesson {
 
     @ManyToOne
     @JoinColumn(name = "tutor_id")
-    private TutorProfile tutorProfile;
+    private Tutor tutorProfile;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private StudentProfile studentProfile;
+    private Student studentProfile;
 
     @Column(name = "meeting_link")
     private String meeting_link;

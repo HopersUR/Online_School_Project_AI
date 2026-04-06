@@ -4,15 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
 @Getter
 @Entity
-@Table(name = "student_profiles")
-public class StudentProfile {
+@Table(name = "student")
+public class Student {
 
     @Id
     @Column(name = "user_id")
@@ -35,7 +35,10 @@ public class StudentProfile {
     @Column
     private String level;
 
-    public StudentProfile() {
+    @ManyToMany(mappedBy = "students")
+    private List<Tutor> tutors;
+
+    public Student() {
     }
 
 }

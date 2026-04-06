@@ -5,10 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.urfu.online_school_project_ai.entity.enums.Role;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -27,8 +26,7 @@ public class User {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @Column
     private Role role;
 
     @CreationTimestamp

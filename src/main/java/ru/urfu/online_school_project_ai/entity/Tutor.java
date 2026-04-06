@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
 @Getter
 @Entity
-@Table(name = "tutor_profiles")
-public class TutorProfile {
+@Table(name = "tutor")
+public class Tutor {
 
     @Id
     @Column(name = "user_id")
@@ -34,7 +35,15 @@ public class TutorProfile {
     @Column(precision = 3, scale = 2)
     private BigDecimal rating;
 
-    public TutorProfile() {
+    @ManyToMany
+    @JoinTable(
+        name = "student_tutor",
+        joinColumns = @JoinColumn(name = "tutor_id"),
+        inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<Student> students;
+
+    public Tutor() {
     }
 
 }

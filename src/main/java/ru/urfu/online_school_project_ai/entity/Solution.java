@@ -26,7 +26,12 @@ public class Solution {
     @Column
     private String code;
 
-    @OneToMany(mappedBy = "solution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(
+        name = "solution_error",
+        joinColumns = @JoinColumn(name = "solution_id"),
+        inverseJoinColumns = @JoinColumn(name = "error_id")
+    )
     private List<Error> errors;
 
     @ManyToOne
@@ -44,4 +49,3 @@ public class Solution {
     }
 
 }
-
