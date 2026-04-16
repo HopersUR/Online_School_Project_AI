@@ -26,6 +26,9 @@ public class User {
     @Column(name = "password_hash")
     private String passwordHash;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column
     private Role role;
 
@@ -60,6 +63,14 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -76,4 +87,3 @@ public class User {
         this.createdAt = createdAt;
     }
 }
-

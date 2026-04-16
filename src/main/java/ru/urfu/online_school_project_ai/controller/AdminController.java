@@ -1,0 +1,59 @@
+package ru.urfu.online_school_project_ai.controller;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import ru.urfu.online_school_project_ai.dto.ChangeRoleDto;
+import ru.urfu.online_school_project_ai.dto.TaskCreateDto;
+import ru.urfu.online_school_project_ai.entity.Task;
+import ru.urfu.online_school_project_ai.service.AdminService;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/admin")
+@RequiredArgsConstructor
+@SecurityRequirement(name = "JWT")
+public class AdminController {
+
+    private final AdminService adminService;
+
+
+    // Доступно только администраторам
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> getAdminDashboard() {
+        return ResponseEntity.ok("Добро пожаловать в панель администратора!");
+    }
+
+    // Смена роли пользователя админом
+    @PutMapping("/users/{userId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> changeUserRole(
+            @PathVariable UUID userId,
+            @RequestBody @Valid ChangeRoleDto dto) {
+        adminService.changeUserRole(userId, dto.role());
+        return ResponseEntity.ok("Роль пользователя успешно изменена на " + dto.role());
+    }
+
+    // Назначение репетитора ученику
+    @PostMapping("/users/student/{studentId}/tutor/{tutorId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> assignTutorToStudent(
+            @PathVariable UUID studentId,
+            @PathVariable UUID tutorId) {
+        adminService.assignTutorToStudent(studentId, tutorId);
+        return ResponseEntity.ok("Репетитор успешно назначен ученику");
+    }
+
+    // Создание новой задачи админом
+    @PostMapping("/tasks")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Task> addTask(@RequestBody @Valid TaskCreateDto dto) {
+        Task createdTask = adminService.addTask(dto);
+        return ResponseEntity.ok(createdTask);
+    }
+}

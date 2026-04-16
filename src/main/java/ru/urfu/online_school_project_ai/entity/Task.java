@@ -11,8 +11,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @Entity
@@ -20,27 +18,29 @@ import java.util.UUID;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "topics_id")
+    @JoinColumn(name = "topics_id", nullable = false)
     private Topic topics;
 
-    @Column(name = "task_number")
+    @Column(name = "task_number", nullable = false)
     private Integer task_number;
 
-    @Column(name = "difficulty")
+    @Column(name = "difficulty", nullable = false)
     private String difficulty;
+
+    @Column(name = "answer", nullable = false)
+    private String answer;
 
     public Task() {
     }
 
 }
-

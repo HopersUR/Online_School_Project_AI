@@ -1,5 +1,7 @@
 package ru.urfu.online_school_project_ai.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
-    @Autowired
     public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
@@ -34,37 +35,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        try {
-            userDetailsService.loadUserByUsername(loginDto.getEmail());
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.badRequest().body("Пользователь с email " + loginDto.getEmail() + " не найден");
-        }
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.badRequest().body("Неверный пароль");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Произошла ошибка при аутентификации");
-        }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password())
+        );
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.email());
         final String jwt = jwtUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new JwtAuthResponseDto(jwt));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDto registrationDto) {
-        try {
-            userService.registerUser(registrationDto);
-            return ResponseEntity.ok("Пользователь успешно зарегистрирован");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Произошла ошибка при регистрации");
-        }
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserRegistrationDto registrationDto) {
+        userService.registerUser(registrationDto);
+        return ResponseEntity.ok("Пользователь успешно зарегистрирован");
     }
 }
