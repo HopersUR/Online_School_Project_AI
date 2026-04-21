@@ -40,6 +40,9 @@ public class Task {
     @Column(name = "answer", nullable = false)
     private String answer;
 
+    @Column(name = "image_url")
+    private String image_url;
+
     public Task() {
     }
 

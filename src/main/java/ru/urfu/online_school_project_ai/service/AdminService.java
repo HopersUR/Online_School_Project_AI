@@ -16,8 +16,14 @@ import ru.urfu.online_school_project_ai.entity.Topic;
 import ru.urfu.online_school_project_ai.repository.TaskRepository;
 import ru.urfu.online_school_project_ai.repository.TopicRepository;
 import ru.urfu.online_school_project_ai.dto.TaskCreateDto;
+import ru.urfu.online_school_project_ai.dto.AdminDashboardDto;
+import ru.urfu.online_school_project_ai.dto.TutorStudentCountDto;
+import ru.urfu.online_school_project_ai.repository.LessonRepository;
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,24 @@ public class AdminService {
     private final StudentRepository studentRepository;
     private final TaskRepository taskRepository;
     private final TopicRepository topicRepository;
+    private final LessonRepository lessonRepository;
+
+    public AdminDashboardDto getDashboardStatistics() {
+        long studentsCount = studentRepository.count();
+        long tutorsCount = tutorRepository.count();
+
+        List<TutorStudentCountDto> tutorsStudentCounts = tutorRepository.findAll().stream()
+                .map(tutor -> new TutorStudentCountDto(
+                        tutor.getName() != null ? tutor.getName() : "Не указано",
+                        tutor.getStudents() == null ? 0 : tutor.getStudents().size()
+                ))
+                .collect(Collectors.toList());
+
+        ZonedDateTime weekAgo = ZonedDateTime.now().minusDays(7);
+        long lessonsThisWeekCount = lessonRepository.countByCreatedAtAfter(weekAgo);
+
+        return new AdminDashboardDto(studentsCount, tutorsCount, tutorsStudentCounts, lessonsThisWeekCount);
+    }
 
     @Transactional
     public void changeUserRole(UUID userId, Role newRole) {
@@ -98,7 +122,43 @@ public class AdminService {
         task.setTask_number(dto.taskNumber());
         task.setDifficulty(dto.difficulty());
         task.setAnswer(dto.answer());
+        task.setImage_url(dto.imageUrl());
 
         return taskRepository.save(task);
+    }
+
+    @Transactional
+    public Task updateTask(Long taskId, ru.urfu.online_school_project_ai.dto.TaskUpdateDto dto) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Задача с ID " + taskId + " не найдена"));
+
+        updateIfNotNull(dto.title(), task::setTitle);
+        updateIfNotNull(dto.description(), task::setDescription);
+        updateIfNotNull(dto.taskNumber(), task::setTask_number);
+        updateIfNotNull(dto.difficulty(), task::setDifficulty);
+        updateIfNotNull(dto.answer(), task::setAnswer);
+        updateIfNotNull(dto.imageUrl(), task::setImage_url);
+
+        if (dto.topicId() != null) {
+            Topic topic = topicRepository.findById(dto.topicId())
+                    .orElseThrow(() -> new IllegalArgumentException("Тема с ID " + dto.topicId() + " не найдена"));
+            task.setTopics(topic);
+        }
+
+        return taskRepository.save(task);
+    }
+
+    private <T> void updateIfNotNull(T value, java.util.function.Consumer<T> setter) {
+        if (value != null) {
+            setter.accept(value);
+        }
+    }
+
+    @Transactional
+    public void deleteTask(Long taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new IllegalArgumentException("Задача с ID " + taskId + " не найдена");
+        }
+        taskRepository.deleteById(taskId);
     }
 }

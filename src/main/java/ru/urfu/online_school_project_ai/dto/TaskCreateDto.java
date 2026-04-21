@@ -20,6 +20,8 @@ public record TaskCreateDto(
         String difficulty,
 
         @NotBlank
-        String answer
+        String answer,
+
+        String imageUrl
 ) {
 }

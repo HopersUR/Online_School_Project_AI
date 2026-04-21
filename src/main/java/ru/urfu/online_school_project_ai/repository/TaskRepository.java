@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByTopicsId(Long topicId);
+    List<Task> findByDifficulty(String difficulty);
+    List<Task> findByTopicsIdAndDifficulty(Long topicId, String difficulty);
 }

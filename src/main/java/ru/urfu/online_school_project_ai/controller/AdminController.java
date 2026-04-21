@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.urfu.online_school_project_ai.dto.ChangeRoleDto;
 import ru.urfu.online_school_project_ai.dto.TaskCreateDto;
+import ru.urfu.online_school_project_ai.dto.AdminDashboardDto;
 import ru.urfu.online_school_project_ai.entity.Task;
 import ru.urfu.online_school_project_ai.service.AdminService;
 
@@ -25,8 +26,8 @@ public class AdminController {
     // Доступно только администраторам
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> getAdminDashboard() {
-        return ResponseEntity.ok("Добро пожаловать в панель администратора!");
+    public ResponseEntity<AdminDashboardDto> getAdminDashboard() {
+        return ResponseEntity.ok(adminService.getDashboardStatistics());
     }
 
     // Смена роли пользователя админом
@@ -55,5 +56,23 @@ public class AdminController {
     public ResponseEntity<Task> addTask(@RequestBody @Valid TaskCreateDto dto) {
         Task createdTask = adminService.addTask(dto);
         return ResponseEntity.ok(createdTask);
+    }
+
+    // Редактирование задачи админом
+    @PutMapping("/tasks/{taskId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Task> updateTask(
+            @PathVariable Long taskId,
+            @RequestBody @Valid ru.urfu.online_school_project_ai.dto.TaskUpdateDto dto) {
+        Task updatedTask = adminService.updateTask(taskId, dto);
+        return ResponseEntity.ok(updatedTask);
+    }
+
+    // Удаление задачи админом
+    @DeleteMapping("/tasks/{taskId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteTask(@PathVariable Long taskId) {
+        adminService.deleteTask(taskId);
+        return ResponseEntity.ok("Задача с ID " + taskId + " успешно удалена");
     }
 }

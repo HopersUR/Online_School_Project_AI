@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
  */
 @OpenAPIDefinition(
         info = @Info(
-                title = "Online School Project API",
-                description = "API для онлайн-школы с искусственным интеллектом, предоставляющая доступ к курсам, заданиям и профилю пользователя."
+                title = "Online School Project API | v1",
+                version = "1.0.0"
         ),
         servers = @Server(url = "/")
 )
