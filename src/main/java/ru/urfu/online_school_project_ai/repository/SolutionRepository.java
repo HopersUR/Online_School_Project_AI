@@ -13,3 +13,4 @@ import java.util.UUID;
 public interface SolutionRepository extends JpaRepository<Solution, UUID> {
     Optional<Solution> findByUserAndTask(User user, Task task);
 }
+

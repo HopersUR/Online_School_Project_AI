@@ -25,6 +25,9 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "student_lesson_number")
+    private Integer studentLessonNumber;
+
     @Column
     private String title;
 
@@ -42,6 +45,9 @@ public class Lesson {
     @Column(name = "meeting_link")
     private String meeting_link;
 
+    @Column(name = "scheduled_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime scheduledAt;
+
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
@@ -50,4 +56,3 @@ public class Lesson {
     }
 
 }
-
