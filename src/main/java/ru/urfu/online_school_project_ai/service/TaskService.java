@@ -33,7 +33,7 @@ public class TaskService {
     public TaskResponseDto getTaskById(Long id) {
         return taskRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException("Задача не найдена"));
     }
 
     public List<TaskResponseDto> getTasksByTopic(Long topicId) {

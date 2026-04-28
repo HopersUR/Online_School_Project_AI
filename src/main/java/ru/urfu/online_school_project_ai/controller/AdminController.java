@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.urfu.online_school_project_ai.dto.ChangeRoleDto;
 import ru.urfu.online_school_project_ai.dto.TaskCreateDto;
 import ru.urfu.online_school_project_ai.dto.AdminDashboardDto;
+import ru.urfu.online_school_project_ai.dto.AdminNotificationCreateDto;
+import ru.urfu.online_school_project_ai.entity.Notification;
 import ru.urfu.online_school_project_ai.entity.Task;
 import ru.urfu.online_school_project_ai.service.AdminService;
+import ru.urfu.online_school_project_ai.service.NotificationService;
 
 import java.util.UUID;
 
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class AdminController {
 
     private final AdminService adminService;
+    private final NotificationService notificationService;
 
 
     // Доступно только администраторам
@@ -28,6 +32,12 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminDashboardDto> getAdminDashboard() {
         return ResponseEntity.ok(adminService.getDashboardStatistics());
+    }
+
+    @PostMapping("/notifications")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Notification> createNotification(@RequestBody AdminNotificationCreateDto dto) {
+        return ResponseEntity.ok(notificationService.createAdminNotification(dto));
     }
 
     // Смена роли пользователя админом
