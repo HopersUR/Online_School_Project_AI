@@ -4,6 +4,7 @@ public record CodeExecutionResponseDto(
         String output,
         String error,
         boolean success,
-        boolean isAnswerCorrect
+        boolean isAnswerCorrect,
+        String aiRecommendation
 ) {
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ public class CodeController {
 
     private final CodeExecutionService codeExecutionService;
 
-    @PostMapping(value = "/execute/python/{taskId}", consumes = "multipart/form-data")
+    @PostMapping(value = "/execute/python/{taskId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Выполнить Python код из файла в Docker контейнере для задачи")
     @PreAuthorize("isAuthenticated()") // Только авторизованные пользователи могут выполнять код
     public ResponseEntity<CodeExecutionResponseDto> executePythonCode(

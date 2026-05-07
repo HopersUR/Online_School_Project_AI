@@ -23,7 +23,7 @@ public class Solution {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String code;
 
     @ManyToMany
@@ -40,6 +40,9 @@ public class Solution {
 
     @Column
     private String status;
+
+    @Column(columnDefinition = "TEXT")
+    private String aiRecommendation;
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")

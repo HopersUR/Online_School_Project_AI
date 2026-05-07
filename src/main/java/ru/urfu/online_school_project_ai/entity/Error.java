@@ -20,7 +20,7 @@ public class Error {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @ManyToMany(mappedBy = "errors")
