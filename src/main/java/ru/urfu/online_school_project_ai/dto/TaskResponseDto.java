@@ -6,7 +6,7 @@ public record TaskResponseDto(
         String description,
         Long topicId,
         Integer taskNumber,
-        String difficulty
+        String difficulty,
+        String fileName
 ) {
 }
-

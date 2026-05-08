@@ -5,7 +5,19 @@ import org.springframework.stereotype.Service;
 import ru.urfu.online_school_project_ai.dto.TaskResponseDto;
 import ru.urfu.online_school_project_ai.entity.Task;
 import ru.urfu.online_school_project_ai.repository.TaskRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ContentDisposition;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +55,42 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    public ResponseEntity<Resource> downloadTaskFile(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Задача не найдена"));
+
+        if (task.getFilePath() == null) {
+            throw new RuntimeException("У задачи нет файла");
+        }
+
+        try {
+            Path filePath = Paths.get(task.getFilePath());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                }
+
+                ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                        .filename(task.getFileName(), StandardCharsets.UTF_8)
+                        .build();
+
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Файл не найден");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Ошибка при скачивании файла", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при определении типа файла", e);
+        }
+    }
+
     private TaskResponseDto mapToDto(Task task) {
         return new TaskResponseDto(
                 task.getId(),
@@ -50,7 +98,8 @@ public class TaskService {
                 task.getDescription(),
                 task.getTopics().getId(),
                 task.getTask_number(),
-                task.getDifficulty()
+                task.getDifficulty(),
+                task.getFileName()
         );
     }
 }

@@ -24,6 +24,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor
@@ -160,5 +167,29 @@ public class AdminService {
             throw new IllegalArgumentException("Задача с ID " + taskId + " не найдена");
         }
         taskRepository.deleteById(taskId);
+    }
+
+    @Transactional
+    public void uploadTaskFile(Long taskId, MultipartFile file) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Задача с ID " + taskId + " не найдена"));
+
+        try {
+            String uploadDir = "uploads/tasks/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            task.setFileName(file.getOriginalFilename());
+            task.setFilePath(filePath.toString());
+            taskRepository.save(task);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при загрузке файла", e);
+        }
     }
 }

@@ -43,6 +43,12 @@ public class Task {
     @Column(name = "image_url")
     private String image_url;
 
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "file_path")
+    private String filePath;
+
     public Task() {
     }
 

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 import ru.urfu.online_school_project_ai.dto.ChangeRoleDto;
 import ru.urfu.online_school_project_ai.dto.TaskCreateDto;
 import ru.urfu.online_school_project_ai.dto.AdminDashboardDto;
@@ -84,5 +86,15 @@ public class AdminController {
     public ResponseEntity<String> deleteTask(@PathVariable Long taskId) {
         adminService.deleteTask(taskId);
         return ResponseEntity.ok("Задача с ID " + taskId + " успешно удалена");
+    }
+
+    // Загрузка файла для задачи админом
+    @PostMapping(value = "/tasks/{taskId}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> uploadTaskFile(
+            @PathVariable Long taskId,
+            @RequestParam("file") MultipartFile file) {
+        adminService.uploadTaskFile(taskId, file);
+        return ResponseEntity.ok("Файл успешно загружен");
     }
 }
