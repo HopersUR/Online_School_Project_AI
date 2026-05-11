@@ -21,11 +21,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ru.urfu.online_school_project_ai.dto.SubmitAnswerResponseDto;
+import ru.urfu.online_school_project_ai.entity.Solution;
+import ru.urfu.online_school_project_ai.entity.User;
+import ru.urfu.online_school_project_ai.repository.SolutionRepository;
+import ru.urfu.online_school_project_ai.repository.UserRepository;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final SolutionRepository solutionRepository;
 
     public List<TaskResponseDto> getTasks(Long topicId, String difficulty) {
         List<Task> tasks;
@@ -101,5 +109,37 @@ public class TaskService {
                 task.getDifficulty(),
                 task.getFileName()
         );
+    }
+
+    public SubmitAnswerResponseDto submitTaskAnswer(Long taskId, String answer, String username) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Задача не найдена"));
+
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            throw new RuntimeException("Пользователь не найден");
+        }
+
+        boolean isCorrect = false;
+        if (task.getAnswer() != null && answer != null) {
+            isCorrect = task.getAnswer().trim().equalsIgnoreCase(answer.trim());
+        }
+
+        Solution solution = new Solution();
+        solution.setUser(user);
+        solution.setTask(task);
+        solution.setCode(answer); // Сохраняем текстовый ответ в поле code
+        if (isCorrect) {
+            solution.setStatus("SUCCESS");
+        } else {
+            solution.setStatus("WRONG_ANSWER");
+        }
+
+        solutionRepository.save(solution);
+
+        return SubmitAnswerResponseDto.builder()
+                .isCorrect(isCorrect)
+                .message(isCorrect ? "Ответ верный!" : "Неверный ответ")
+                .build();
     }
 }

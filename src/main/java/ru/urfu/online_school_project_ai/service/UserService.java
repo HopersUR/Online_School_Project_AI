@@ -23,7 +23,6 @@ public class UserService {
     private final TutorRepository tutorRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     @Transactional
     public void registerUser(UserRegistrationDto dto) {
 

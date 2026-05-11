@@ -13,5 +13,10 @@ import java.util.UUID;
 @Repository
 public interface SolutionRepository extends JpaRepository<Solution, UUID> {
     List<Solution> findByUserAndTask(User user, Task task);
-}
 
+    List<Solution> findByUser(User user);
+
+    long countByUser(User user);
+
+    long countByUserAndStatus(User user, String status);
+}
