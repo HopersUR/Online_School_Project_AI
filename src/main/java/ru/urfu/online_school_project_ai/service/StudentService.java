@@ -67,12 +67,12 @@ public class StudentService {
 
             long tSubmitted = topicSolutions.size();
 
-            topicStatsList.add(TopicStatisticsDto.builder()
-                    .topicName(topic.getName())
-                    .totalAttemptedTasks(tAttempted)
-                    .totalSuccessfullySolvedTasks(tSolved)
-                    .totalSolutionsSubmitted(tSubmitted)
-                    .build());
+            topicStatsList.add(new TopicStatisticsDto(
+                    topic.getName(),
+                    tAttempted,
+                    tSolved,
+                    tSubmitted
+            ));
         }
 
         Double avgScore = aiAnalysisRepository.getAverageScoreByStudent(studentUser);
@@ -82,13 +82,13 @@ public class StudentService {
                 .flatMap(a -> a.getErrorTypes().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-        return StudentStatisticsDto.builder()
-                .totalSolutionsSubmitted(totalSolutions)
-                .totalAttemptedTasks(uniqueAttemptedTasks)
-                .totalSuccessfullySolvedTasks(successfullySolved)
-                .averageAiScore(avgScore != null ? Math.round(avgScore * 100.0) / 100.0 : 0.0)
-                .commonErrorsMatrix(errorMatrix)
-                .topicStatistics(topicStatsList)
-                .build();
+        return new StudentStatisticsDto(
+                uniqueAttemptedTasks,
+                successfullySolved,
+                totalSolutions,
+                avgScore != null ? Math.round(avgScore * 100.0) / 100.0 : 0.0,
+                errorMatrix,
+                topicStatsList
+        );
     }
 }

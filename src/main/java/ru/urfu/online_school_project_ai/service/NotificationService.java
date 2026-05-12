@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.urfu.online_school_project_ai.dto.AdminNotificationCreateDto;
 import ru.urfu.online_school_project_ai.entity.User;
 import ru.urfu.online_school_project_ai.repository.UserRepository;
+import java.time.ZonedDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +43,9 @@ public class NotificationService {
 
     @Transactional
     public Notification createAdminNotification(AdminNotificationCreateDto dto) {
-        if (dto.getUserIds() != null && !dto.getUserIds().isEmpty()) {
-            List<User> selectedUsers = userRepository.findAllById(dto.getUserIds());
+
+        if (dto.userIds() != null && !dto.userIds().isEmpty()) {
+            List<User> selectedUsers = userRepository.findAllById(dto.userIds());
             if (selectedUsers.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователи не найдены");
             }
@@ -52,9 +54,9 @@ public class NotificationService {
             for (User user : selectedUsers) {
                 Notification notification = new Notification();
                 notification.setUser(user);
-                notification.setText(dto.getText());
-                // Если тип не указан, ставим SYSTEM по умолчанию
-                notification.setType(dto.getType() != null && !dto.getType().isBlank() ? dto.getType() : "SYSTEM");
+                notification.setText(dto.text());
+                notification.setCreatedAt(ZonedDateTime.now());
+                notification.setType(dto.type() != null && !dto.type().isBlank() ? dto.type() : "SYSTEM");
                 notification.setIs_read(false);
                 notifications.add(notification);
             }
@@ -70,9 +72,9 @@ public class NotificationService {
             for (User user : allUsers) {
                 Notification notification = new Notification();
                 notification.setUser(user);
-                notification.setText(dto.getText());
-                // Если тип не указан, ставим SYSTEM по умолчанию
-                notification.setType(dto.getType() != null && !dto.getType().isBlank() ? dto.getType() : "SYSTEM");
+                notification.setText(dto.text());
+                notification.setCreatedAt(ZonedDateTime.now());
+                notification.setType(dto.type() != null && !dto.type().isBlank() ? dto.type() : "SYSTEM");
                 notification.setIs_read(false);
                 notifications.add(notification);
             }

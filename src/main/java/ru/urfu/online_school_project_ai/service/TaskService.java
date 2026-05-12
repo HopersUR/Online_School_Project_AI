@@ -137,9 +137,9 @@ public class TaskService {
 
         solutionRepository.save(solution);
 
-        return SubmitAnswerResponseDto.builder()
-                .isCorrect(isCorrect)
-                .message(isCorrect ? "Ответ верный!" : "Неверный ответ")
-                .build();
+        return new SubmitAnswerResponseDto(
+                isCorrect,
+                isCorrect ? "Ответ верный!" : "Неверный ответ"
+        );
     }
 }

@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TopicStatisticsDto {
-    private String topicName;
-    private long totalAttemptedTasks;
-    private long totalSuccessfullySolvedTasks;
-    private long totalSolutionsSubmitted;
-}
 
+public record TopicStatisticsDto (
+    String topicName,
+    long totalAttemptedTasks,
+    long totalSuccessfullySolvedTasks,
+    long totalSolutionsSubmitted
+
+)
+{
+}

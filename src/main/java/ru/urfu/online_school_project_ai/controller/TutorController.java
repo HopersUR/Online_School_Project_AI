@@ -6,10 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.urfu.online_school_project_ai.dto.StudentDto;
 import ru.urfu.online_school_project_ai.dto.StudentStatisticsDto;
+import ru.urfu.online_school_project_ai.dto.TutorNotificationCreateDto;
 import ru.urfu.online_school_project_ai.service.TutorService;
 import ru.urfu.online_school_project_ai.service.StudentService;
 import ru.urfu.online_school_project_ai.repository.UserRepository;
@@ -45,7 +48,7 @@ public class TutorController {
     }
 
     @GetMapping("/students/{studentId}/dashboard")
-    @PreAuthorize("hasRole('TUTOR')")
+    @PreAuthorize("hasAnyRole('TUTOR', 'ADMIN')")
     public ResponseEntity<StudentStatisticsDto> getStudentDashboardForTutor(
             @PathVariable UUID studentId) {
 
@@ -54,5 +57,15 @@ public class TutorController {
                 .orElseThrow(() -> new RuntimeException("Ученик не найден"));
 
         return ResponseEntity.ok(studentService.getStudentDashboard(studentUser));
+    }
+
+    @PostMapping("/notifications")
+    @PreAuthorize("hasRole('TUTOR')")
+    public ResponseEntity<String> createNotificationForStudents(
+            Principal principal,
+            @RequestBody TutorNotificationCreateDto dto) {
+
+        tutorService.createNotificationForStudents(principal.getName(), dto);
+        return ResponseEntity.ok("Уведомление успешно отправлено");
     }
 }
