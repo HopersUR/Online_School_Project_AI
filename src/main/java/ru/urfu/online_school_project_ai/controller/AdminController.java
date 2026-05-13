@@ -28,7 +28,7 @@ public class AdminController {
     private final AdminService adminService;
     private final NotificationService notificationService;
 
-
+    //test git
     // Доступно только администраторам
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
