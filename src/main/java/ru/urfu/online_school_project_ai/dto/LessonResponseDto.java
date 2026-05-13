@@ -11,6 +11,7 @@ public record LessonResponseDto(
     UUID tutorId,
     UUID studentId,
     String meetingLink,
+    String videoLessonLink,
     ZonedDateTime scheduledAt,
     ZonedDateTime createdAt
 ) {}

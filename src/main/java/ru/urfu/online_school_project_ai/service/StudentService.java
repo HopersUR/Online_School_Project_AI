@@ -4,14 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.urfu.online_school_project_ai.dto.StudentStatisticsDto;
+import ru.urfu.online_school_project_ai.dto.TutorProfileResponseDto;
 import ru.urfu.online_school_project_ai.dto.TopicStatisticsDto;
 import ru.urfu.online_school_project_ai.entity.AiAnalysis;
 import ru.urfu.online_school_project_ai.entity.Solution;
+import ru.urfu.online_school_project_ai.entity.Student;
+import ru.urfu.online_school_project_ai.entity.Tutor;
 import ru.urfu.online_school_project_ai.entity.User;
 import ru.urfu.online_school_project_ai.entity.Topic;
 import ru.urfu.online_school_project_ai.entity.enums.AiErrorType;
 import ru.urfu.online_school_project_ai.repository.AiAnalysisRepository;
 import ru.urfu.online_school_project_ai.repository.SolutionRepository;
+import ru.urfu.online_school_project_ai.repository.StudentRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +29,7 @@ public class StudentService {
 
     private final SolutionRepository solutionRepository;
     private final AiAnalysisRepository aiAnalysisRepository;
+    private final StudentRepository studentRepository;
 
     @Transactional(readOnly = true)
     public StudentStatisticsDto getStudentDashboard(User studentUser) {
@@ -77,7 +82,7 @@ public class StudentService {
 
         Double avgScore = aiAnalysisRepository.getAverageScoreByStudent(studentUser);
 
-        List<AiAnalysis> analyses = aiAnalysisRepository.findByStudent(studentUser);
+        List<AiAnalysis> analyses = aiAnalysisRepository.findBySolutionUser(studentUser);
         Map<AiErrorType, Long> errorMatrix = analyses.stream()
                 .flatMap(a -> a.getErrorTypes().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
@@ -90,5 +95,25 @@ public class StudentService {
                 errorMatrix,
                 topicStatsList
         );
+    }
+
+    public List<TutorProfileResponseDto> getMyTutors(User currentUser) {
+        Student student = studentRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("Ученик не найден"));
+
+        if (student.getTutors() == null || student.getTutors().isEmpty()) {
+            return List.of();
+        }
+
+        return student.getTutors().stream()
+                .map(tutor -> new TutorProfileResponseDto(
+                        tutor.getId(),
+                        tutor.getName(),
+                        tutor.getAvatar(),
+                        tutor.getUser() != null ? tutor.getUser().getEmail() : null,
+                        tutor.getExperience(),
+                        tutor.getRating()
+                ))
+                .toList();
     }
 }

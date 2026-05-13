@@ -8,8 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,6 +51,9 @@ public class Task {
 
     @Column(name = "file_path")
     private String filePath;
+
+    @ManyToMany(mappedBy = "tasks")
+    private List<Homework> homeworks;
 
     public Task() {
     }

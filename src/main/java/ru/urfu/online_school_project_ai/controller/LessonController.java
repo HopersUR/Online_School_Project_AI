@@ -70,4 +70,14 @@ public class LessonController {
             @RequestParam String link) {
         return ResponseEntity.ok(lessonService.updateLessonLink(authentication.getName(), id, link));
     }
+
+    @PatchMapping("/{id}/video-link")
+    @PreAuthorize("hasAnyRole('TUTOR', 'ADMIN')")
+    @Operation(summary = "Добавить ссылку на видео", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<LessonResponseDto> addVideoLink(
+            Authentication authentication,
+            @PathVariable UUID id,
+            @RequestParam String videoLink) {
+        return ResponseEntity.ok(lessonService.addVideoLink(authentication.getName(), id, videoLink));
+    }
 }

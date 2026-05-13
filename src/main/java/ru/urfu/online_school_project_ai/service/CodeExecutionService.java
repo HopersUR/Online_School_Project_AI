@@ -120,7 +120,7 @@ public class CodeExecutionService {
 
                     solutionRepository.save(solution);
 
-                    parseAndSaveAiAnalysis(aiRecommendation, solution, user, task);
+                    parseAndSaveAiAnalysis(aiRecommendation, solution);
                 }
             } else {
                 aiRecommendation = openRouterService.analyzeStudentCode(code, "Общая задача", null, output, error);
@@ -134,13 +134,11 @@ public class CodeExecutionService {
         }
     }
 
-    private void parseAndSaveAiAnalysis(String aiOutput, Solution solution, User user, Task task) {
+    private void parseAndSaveAiAnalysis(String aiOutput, Solution solution) {
         if (aiOutput == null || aiOutput.isBlank()) return;
 
         AiAnalysis aiAnalysis = new AiAnalysis();
         aiAnalysis.setSolution(solution);
-        aiAnalysis.setStudent(user);
-        aiAnalysis.setTask(task);
         aiAnalysis.setResult_text(aiOutput);
 
         // Парсинг оценки (например, "Оценка: 85")

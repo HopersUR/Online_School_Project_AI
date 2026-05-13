@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface AiAnalysisRepository extends JpaRepository<AiAnalysis, UUID> {
-    List<AiAnalysis> findByStudent(User student);
+    List<AiAnalysis> findBySolutionUser(User student);
 
-    @Query("SELECT AVG(a.score) FROM AiAnalysis a WHERE a.student = :student AND a.score IS NOT NULL")
+    @Query("SELECT AVG(a.score) FROM AiAnalysis a WHERE a.solution.user = :student AND a.score IS NOT NULL")
     Double getAverageScoreByStudent(@Param("student") User student);
 }

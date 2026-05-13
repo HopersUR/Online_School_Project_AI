@@ -173,6 +173,30 @@ public class LessonService {
         return mapToDto(lesson);
     }
 
+    @Transactional
+    public LessonResponseDto addVideoLink(String username, UUID lessonId, String videoLink) {
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            throw new RuntimeException("Пользователь не найден");
+        }
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Занятие не найдено"));
+
+        if (user.getRole() != Role.ADMIN) {
+            if (user.getRole() == Role.TUTOR && !lesson.getTutorProfile().getId().equals(user.getId())) {
+                throw new RuntimeException("Вы можете изменять только свои занятия");
+            } else if (user.getRole() == Role.STUDENT) {
+                throw new RuntimeException("Ученики не могут изменять занятия");
+            }
+        }
+
+        lesson.setVideo_lesson_link(videoLink);
+        lesson = lessonRepository.save(lesson);
+
+        return mapToDto(lesson);
+    }
+
     private LessonResponseDto mapToDto(Lesson lesson) {
         return new LessonResponseDto(
                 lesson.getId(),
@@ -182,6 +206,7 @@ public class LessonService {
                 lesson.getTutorProfile().getId(),
                 lesson.getStudentProfile().getId(),
                 lesson.getMeeting_link(),
+                lesson.getVideo_lesson_link(),
                 lesson.getScheduledAt(),
                 lesson.getCreatedAt()
         );

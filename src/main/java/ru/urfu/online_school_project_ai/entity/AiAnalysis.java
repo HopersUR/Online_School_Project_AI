@@ -24,13 +24,6 @@ public class AiAnalysis {
     @JoinColumn(name = "solution_id", nullable = true)
     private Solution solution;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id")
-    private Task task;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User student;
 
     @Column(columnDefinition = "TEXT")
     private String result_text;

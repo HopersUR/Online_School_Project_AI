@@ -45,6 +45,9 @@ public class Lesson {
     @Column(name = "meeting_link")
     private String meeting_link;
 
+    @Column(name = "video_lesson_link")
+    private String video_lesson_link;
+
     @Column(name = "scheduled_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime scheduledAt;
 
