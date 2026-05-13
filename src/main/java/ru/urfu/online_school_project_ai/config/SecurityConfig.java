@@ -49,7 +49,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/tasks/**").permitAll()
-
+                        .requestMatchers("/health").permitAll()
                         .anyRequest().authenticated()
                 )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

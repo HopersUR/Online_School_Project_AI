@@ -1,15 +1,16 @@
 spring:
   application:
     name: Online_School_Project_AI
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/egeschool
-    username: postgres
-    password: zxcvb12345
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/online_school}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-
 openrouter:
   api:
-    key: API-KEY
+    key: ${OPENROUTER_API_KEY:your_api_key_here}
